@@ -96,7 +96,7 @@ body.admin .add{display:flex}
 <script>
 /* ===== إعدادات: غيّرها هنا (أو اتركها فاضية وتنحفظ من الصفحة) ===== */
 const CONFIG = {
-  DB_URL: "https://live-dkn-default-rtdb.firebaseio.com",
+  DB_URL: "https://live-dkn-default-rtdb.firebaseio.com",      // مثال: https://my-project-default-rtdb.firebaseio.com
   ADMIN_PIN: "1234"  // رمز وضع الإدارة (غيّره)
 };
 /* ================================================================ */
@@ -168,13 +168,13 @@ function render(){
     id, name: m.name, on: !!(presence[id] && presence[id].in), t: presence[id] && presence[id].t
   })).sort((a, b) => (b.on - a.on) || a.name.localeCompare(b.name, "ar"));
   const total = list.length, here = list.filter(x => x.on).length;
+  const shown = admin ? list : list.filter(x => x.on);
   const liveTxt = status === "on" ? "مباشر" : status === "err" ? "لا يوجد اتصال" : "جاري الاتصال";
 
   app.innerHTML = `
     <div class="top"><h1 dir="ltr">LiveDKN</h1>
       <div class="live ${status}"><i></i>${liveTxt}</div></div>
-    <div class="count"><b>${n(here)}</b><span>موجود</span><small>من ${n(total)}</small></div>
-    <div class="lamps">${list.map(x => `<i class="${x.on ? "on" : ""}"></i>`).join("")}</div>
+    <div class="count"><b>${n(here)}</b><span>موجود</span>${admin ? `<small>من ${n(total)}</small>` : ""}</div>
     <div class="list" id="list"></div>
     <form class="add" id="addform">
       <input id="newname" placeholder="اسم العضو الجديد" maxlength="28" autocomplete="off">
@@ -185,8 +185,10 @@ function render(){
   const box = $("#list");
   if(!total){
     box.innerHTML = `<div class="empty">ما فيه أعضاء للحين.<br>افتح «الإدارة» وأضف أول عضو.</div>`;
+  } else if(!shown.length){
+    box.innerHTML = `<div class="empty">ما أحد في الاستراحة الحين</div>`;
   }
-  list.forEach(x => {
+  shown.forEach(x => {
     const row = document.createElement("div");
     row.className = "row" + (x.on ? " on" : "");
     row.innerHTML = `<div class="av"></div>
