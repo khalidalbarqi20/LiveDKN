@@ -109,7 +109,7 @@ const store = {
 let DB = (CONFIG.DB_URL || store.get("dbUrl") || "").trim().replace(/\/+$/, "");
 let members = {}, presence = {}, status = "idle", admin = false;
 
-const nf = new Intl.NumberFormat("ar-SA");
+const nf = new Intl.NumberFormat("en-US");
 const n = (x) => nf.format(x);
 
 function toast(msg){
